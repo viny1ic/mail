@@ -1,29 +1,36 @@
 const nodemailer = require('nodemailer');
-const user = {
-	username: '',
-	password: '',
-};
-async function main() {
+const dotenv = require('dotenv').config()
+const fs = require('fs');
+
+
+async function main(filepath) {
 	let transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
-			user: user.username,
-			pass: user.password,
+			user: process.env.username,
+			pass: process.env.password,
 		},
 	});
-	try {
-		let info = await transporter.sendMail({
-			from: '"Test" thisisatestbot420@gmail.com',
-			to: 'nr.rnarayan@gmail.com, "captaink3nway@gmail.com',
-			subject: 'Hello ✔',
-			text: 'Hello world?',
-			html: '<b>Hello world?</b>',
-		});
-		console.log('Message sent: %s', info.messageId);
-		console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-	} catch (err) {
-		console.log(err);
-	}
+	fs.readFile(filepath, 'utf8', async function (err,data) {
+		if (err) {
+		  return console.log(err);
+		}
+		try {
+			let info = await transporter.sendMail({
+				sender: 'fresh.dairycakes@gmail.com',
+				to: 'vinayak.delta@gmail.com',
+				subject: 'Hello ✔',
+				// html: '<h1>UwU Senpai</h1>',
+				html: data,
+			}, function(){console.log(data)});
+			console.log('Message sent: %s', info.messageId);
+			console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+		} catch (err) {
+			console.log(err);
+		}
+	  });
+	
 }
 
-module.exports = main;
+// module.exports = main;
+main('tempelate.html')
